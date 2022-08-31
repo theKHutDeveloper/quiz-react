@@ -1,4 +1,5 @@
 import React from 'react';
+import Trivia_api from '../api/Trivia_api';
 
 class Menu extends React.Component {
     constructor(props) {
@@ -9,7 +10,20 @@ class Menu extends React.Component {
             selectedCategory: "",
             categories: [],
             result: []
-        }
+        };
+
+        this.handleSubmit = this.handleSubmit.bind(this);
+    };
+
+    componentDidMount() {
+        this.getCategories();
+    };
+
+    async getCategories() {
+        const response = await Trivia_api.get('/api_category.php');
+        this.setState({
+            categories: response.data.trivia_categories, selectedCategory: response.data.trivia_categories[0].name
+        });
     };
 
     handleOptionChange = changeEvent => {
@@ -26,6 +40,11 @@ class Menu extends React.Component {
 
     handleSubmit = e => {
         e.preventDefault();
+
+        this.state.result.push(this.state.selectedOption);
+        this.state.result.push(this.state.selectedCategory);
+
+        this.props.onSubmit(this.state.result);
     };
 
     render () {

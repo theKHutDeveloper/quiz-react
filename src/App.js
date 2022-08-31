@@ -5,11 +5,16 @@ import Menu from './components/Menu';
 
 
 class App extends React.Component {
+
+  onCategorySubmit(categoryOptions) {
+    console.log(categoryOptions);
+  };
+
   render() {
     return (
       <div className="App">
         <Header/>
-        <Menu />
+        <Menu onSubmit={this.onCategorySubmit}/>
       </div>
     )
   }
