@@ -9,7 +9,7 @@ class Menu extends React.Component {
             selectedOption: "medium",
             selectedCategory: "",
             categories: [],
-            result: []
+            results: []
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -22,8 +22,18 @@ class Menu extends React.Component {
     async getCategories() {
         const response = await Trivia_api.get('/api_category.php');
         this.setState({
-            categories: response.data.trivia_categories, selectedCategory: response.data.trivia_categories[0].name
+            categories: response.data.trivia_categories, 
+            selectedCategory: response.data.trivia_categories[0].id,
         });
+    };
+
+    async getQuestions() {
+        const response = await Trivia_api.get('/api.php?amount=10&category='+ this.state.selectedCategory + '&difficulty='+ this.state.selectedOption)
+        const data = await response.data
+        const result = await data.results
+
+        this.state.results = result
+        console.log('state: result: ', this.state.results)
     };
 
     handleOptionChange = changeEvent => {
@@ -34,17 +44,15 @@ class Menu extends React.Component {
 
     handleCategoryChange = changeEvent => {
         this.setState({
-            selectedCategory: changeEvent.target.value
+            selectedCategory: changeEvent.target.value,
         });
     };
 
-    handleSubmit = e => {
+    handleSubmit = async e => {
         e.preventDefault();
+        await this.getQuestions();
 
-        this.state.result.push(this.state.selectedOption);
-        this.state.result.push(this.state.selectedCategory);
-
-        this.props.onSubmit(this.state.result);
+        this.props.onSubmit(this.state.results)
     };
 
     render () {
@@ -64,7 +72,7 @@ class Menu extends React.Component {
                             <select 
                                 value={this.state.selectedCategory} 
                                 onChange={this.handleCategoryChange}>
-                                    {this.state.categories.map((topic) => <option value={topic.name} key={topic.id}> {topic.name} </option>)}
+                                    {this.state.categories.map((topic) => <option value={topic.id}  key={topic.id}> {topic.name} </option>)}
                             </select>
                         </label>
                     </div>
