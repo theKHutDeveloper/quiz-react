@@ -1,57 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Header from './components/Header';
 import Menu from './components/Menu';
 import Questions from './components/Questions';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
+export default function App (props) {
 
-    this.state = {
-      categoryChosen: false
-    };
+  const [categoryChosen, setCategoryChosen] = useState(false)
+  const [results, setResults] = useState([])
 
-    this.onCategorySubmit = this.onCategorySubmit.bind(this);
+  const onCategorySubmit = (questionData) => {
+    setCategoryChosen(true)
+    setResults( questionData)
   };
 
-  onCategorySubmit(questionData) {
-    this.setState({
-      results: questionData,
-      categoryChosen: true
-    });
-  };
-
-  showInitialComponents() {
+  const showInitialComponents = () => {
     return(
       <div className="App">
       <Header/>
-      <Menu onSubmit={this.onCategorySubmit}/>
+      <Menu onSubmit={onCategorySubmit}/>
     </div>
     )
   }
 
-  showQuestions() {
+  const showQuestions = () => {
     return (
       <div className="App">
         <Header/>
-        <Questions results={this.state.results} />
+        <Questions results={results} />
       </div>
     )
   }
 
-  render() {
-    let hasChosenCategory = this.state.categoryChosen;
+  const someFunction = () => {
+    let hasChosenCategory = categoryChosen;
     let content;
 
     if (hasChosenCategory) {
-      content = this.showQuestions();
+      content = showQuestions();
     } else {
-      content = this.showInitialComponents();
+      content = showInitialComponents();
     }
 
     return <div>{content}</div>
   }
-}
 
-export default App;
+  return (someFunction())
+}
