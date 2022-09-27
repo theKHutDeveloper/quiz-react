@@ -2,6 +2,7 @@ import React from 'react';
 import { decode } from 'html-entities';
 import hands_up from '../hands_up.png';
 import hands_down from '../hands_down.png';
+import '../App.css';
 
 class Questions extends React.Component {
     constructor(props) {
@@ -13,6 +14,7 @@ class Questions extends React.Component {
         this.state = {
             results: props.results,
             category: props.results[0].category,
+            level: props.results[0].difficulty,
             size: props.results.length,
             counter: 1,
             question_data: group_results,
@@ -20,7 +22,6 @@ class Questions extends React.Component {
             selected_answers: radio_selects,
             answers: []
         };
-
         this.submitQuestion = this.submitQuestion.bind(this);
     };
 
@@ -95,26 +96,35 @@ class Questions extends React.Component {
         return image;
     }
 
-    showResults() {
-        let user_results =
-            <div className='results'>
-                { this.state.question_data.map((data, index) => (
-                    <div>
-                        <p key={index}>{data.question}</p>
-                        <span key={"your_ans"+index}>{this.state.selected_answers[index]}</span>
-                        <span>{this.showImage(this.state.selected_answers[index], data.correct_answer)}</span>
-                        {
-                            this.state.selected_answers[index] !== data.correct_answer &&
-                                <span key={"answer"+index}>{data.correct_answer}</span>
-                        }
-                    </div>
-                ))}
+    renderTable(){
+        let results_table =
+        <div className='results'>
+            <br></br>
+            <table className='table-results'>
+                <thead>
+                <tr>
+                    <th>Questions</th>
+                    <th>Your Answers</th>
+                    <th>Results</th>
+                    <th>Correct Answers</th>
+                </tr>
+                </thead>
+                <tbody>
+                { this.state.question_data.map((data, index) =>
+                    <tr>
+                        <td key={index}>Q{index + 1}: {data.question}</td>
+                        <td key={"your_ans" + index}>{this.state.answers[index]}</td>
+                        <td key={"image" + index}>{this.showImage(this.state.answers[index], data.correct_answer)}</td>
+                        <td key={"answer" + index}>{data.correct_answer}</td>
+                    </tr>
+                )}
+                </tbody>
+            </table>
             </div>
-        return user_results;
+        return results_table;
     }
 
     submitQuestion = e => {
-        console.log(this.state.selectedAnswer);
         this.setState({
             answers: [...this.state.answers, this.state.selectedAnswer],
             selectedAnswer: this.state.selected_answers[this.state.counter],
@@ -128,7 +138,8 @@ class Questions extends React.Component {
     render() {
         return (
             <div>
-                <h1>{this.state.category}</h1>
+                <h1 className='category-title'>{this.state.category}</h1>
+                <div className='difficulty-level'>Difficulty: {this.state.level}</div>
 
                 {
                     this.state.size > 0 && this.state.counter <= this.state.size &&
@@ -164,11 +175,14 @@ class Questions extends React.Component {
                     {
                         this.state.counter === 11 &&
                             <div>
-                                {this.showResults()}
+                                {this.renderTable()}
                             </div>
                     }
 
-                    <input type="submit" value={this.state.counter < this.state.size ? "Next" : "Get Results"}/>
+                    {
+                        this.state.counter < 11 &&
+                            <input type="submit" value={this.state.counter < this.state.size ? "Next" : "Get Results"}/>
+                    }
                 </form>
             </div>
         )
