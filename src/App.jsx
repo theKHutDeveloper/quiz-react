@@ -4,14 +4,14 @@ import Header from './components/Header';
 import Menu from './components/Menu';
 import Questions from './components/Questions';
 
-export default function App (props) {
+export default function App () {
 
   const [categoryChosen, setCategoryChosen] = useState(false)
   const [results, setResults] = useState([])
 
   const onCategorySubmit = (questionData) => {
     setCategoryChosen(true)
-    setResults( questionData)
+    setResults(questionData)
   };
 
   const showInitialComponents = () => {
